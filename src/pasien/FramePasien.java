@@ -40,6 +40,7 @@ public class FramePasien extends javax.swing.JFrame {
          
     }
     
+    //menampilkan data pasien
     public void loadData(){
         String sql ="SELECT * FROM pasien";
         try {
@@ -49,15 +50,37 @@ public class FramePasien extends javax.swing.JFrame {
             while(rs.next()){
                 model.addRow(new String[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),rs.getString(6)});
             }
-            
+            model.fireTableDataChanged();
         } catch (Exception ex) {
             System.out.println("Eror" + ex.getMessage());
             
         }
     }
     
-  
-  
+    //untuk melakukan search
+    public void cari(){
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("id");
+        model.addColumn("nik");
+        model.addColumn("nama_pasien");
+        model.addColumn("tanggal lahir");
+        model.addColumn("no_telp");
+        model.addColumn("alamat");
+        
+        try {
+            String sql = "SELECT *FROM pasien WHERE nik like '%"+txtCari.getText() + "%'";
+            st = db.con.createStatement();
+            rs = st.executeQuery(sql);
+             while(rs.next()){
+                model.addRow(new String[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),rs.getString(6)});
+                tblPasien.setModel(model);
+            }
+        } catch (Exception e) {
+            
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -90,8 +113,8 @@ public class FramePasien extends javax.swing.JFrame {
         txtAlamat1 = new javax.swing.JTextArea();
         jLabel7 = new javax.swing.JLabel();
         btnExit = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jButton5 = new javax.swing.JButton();
+        txtCari = new javax.swing.JTextField();
+        btnCari = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -215,9 +238,25 @@ public class FramePasien extends javax.swing.JFrame {
             }
         });
 
-        jButton5.setBackground(new java.awt.Color(204, 204, 204));
-        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton5.setText("Cari");
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCariActionPerformed(evt);
+            }
+        });
+
+        btnCari.setBackground(new java.awt.Color(204, 204, 204));
+        btnCari.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnCari.setText("Cari");
+        btnCari.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCariMouseClicked(evt);
+            }
+        });
+        btnCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCariActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -236,7 +275,7 @@ public class FramePasien extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(22, 22, 22)
@@ -248,7 +287,7 @@ public class FramePasien extends javax.swing.JFrame {
                                         .addGap(18, 18, 18)
                                         .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(158, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(74, 74, 74)
@@ -308,8 +347,8 @@ public class FramePasien extends javax.swing.JFrame {
                 .addGap(55, 55, 55)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -345,6 +384,7 @@ public class FramePasien extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNamaPasienActionPerformed
 
+    //create data pasien
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
         try {
@@ -364,7 +404,7 @@ public class FramePasien extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnTambahActionPerformed
 
-
+    //update untuk data pasien
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
         try {
@@ -392,6 +432,7 @@ public class FramePasien extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNikActionPerformed
 
+    //delete untuk data pasien
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         // TODO add your handling code here:
         int row = tblPasien.getSelectedRow();
@@ -420,6 +461,7 @@ public class FramePasien extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnExitActionPerformed
 
+    //list data pasien
     private void tblPasienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPasienMouseClicked
         // TODO add your handling code here:
         int row = tblPasien.getSelectedRow();
@@ -430,6 +472,19 @@ public class FramePasien extends javax.swing.JFrame {
         txtAlamat1.setText(tblPasien.getValueAt(row, 5).toString());
         
     }//GEN-LAST:event_tblPasienMouseClicked
+
+    private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
+        // TODO add your handling code here:
+        cari();
+    }//GEN-LAST:event_btnCariActionPerformed
+
+    private void btnCariMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCariMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCariMouseClicked
+
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
 
     /**
      * @param args the command line arguments
@@ -468,11 +523,11 @@ public class FramePasien extends javax.swing.JFrame {
     
   
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCari;
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnTambah;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -485,9 +540,9 @@ public class FramePasien extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblPasien;
     private javax.swing.JTextArea txtAlamat1;
+    private javax.swing.JTextField txtCari;
     private javax.swing.JTextField txtNamaPasien;
     private javax.swing.JTextField txtNik;
     private javax.swing.JTextField txtNoTelp;
